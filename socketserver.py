@@ -1,3 +1,6 @@
+import sys
+sys.path.append('/home/pi/Giess-o-mat/')
+
 from giessomat import Relais
 from giessomat import Fans
 import eventlet
@@ -10,15 +13,15 @@ eventlet.monkey_patch()
 #path_json = '/home/pi/Giess-o-mat/giessomat/processes.json'
 #path_l298n = '/home/pi/Giess-o-mat/giessomat/L298n.py'
 
-relais_light = Relais.Relais(17)
-relais_fan = Relais.Relais(18)
+relais_light = Relais.Relais(23)
+relais_fan = Relais.Relais(24)
 
 
 #fans = Fans.Fans(path_l298n, path_json)
 
 mgr = socketio.KombuManager('amqp://')
 sio = socketio.Server(cors_allowed_origins=[
-                      'http://localhost:5672', 'http://192.168.0.134:8080', 'http://192.168.0.235'], client_manager=mgr)
+                      'http://localhost:5672', 'http://192.168.0.134:8080', 'http://192.168.0.235', 'http://192.168.1.149:8080'], client_manager=mgr)
 
 #sio = socketio.Server(cors_allowed_origins='*')
 app = socketio.WSGIApp(sio)
