@@ -11,7 +11,7 @@ eventlet.monkey_patch()
 
 relais_light = Relais.Relais(23)
 relais_fan = Relais.Relais(24)
-relais_pump = Relais.Relais(25)
+relais_irrigation = Relais.Relais(25)
 relais_valve = Relais.Relais(16)
 
 mgr = socketio.KombuManager('amqp://')
@@ -36,8 +36,11 @@ def light(sid, data):
         print(data)
         sio.emit('light', False)
         relais_light.off()
-    if data == 'status:
+    if data == 'status':
         print('Status request')
+        status = relais_light.get_status()
+        print(status)
+        sio.emit('light', status)
 
 
 @sio.event
@@ -50,8 +53,11 @@ def fan(sid, data):
         print(data)
         sio.emit('fan', False)
         relais_fan.off()
-    if data == 'status:
+    if data == 'status':
         print('Status request')
+        status= relais_fan.get_status()
+        print(status)
+        sio.emit('fan', status)
 
 
 @sio.event
@@ -64,8 +70,11 @@ def irrigation(sid, data):
         print(data)
         sio.emit('irrigation', False)
         relais_irrigation.off()
-    if data == 'status:
+    if data == 'status':
         print('Status request')
+        status = relais_irrigation.get_status()
+        print(status)
+        sio.emit('irrigation', status)
 
 
 @sio.event
