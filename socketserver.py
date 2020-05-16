@@ -12,7 +12,6 @@ eventlet.monkey_patch()
 relais_light = Relais.Relais(23)
 relais_fan = Relais.Relais(24)
 relais_irrigation = Relais.Relais(25)
-relais_valve = Relais.Relais(16)
 
 mgr = socketio.KombuManager('amqp://')
 sio = socketio.Server(cors_allowed_origins=[
