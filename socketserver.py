@@ -1,22 +1,26 @@
 import sys
 sys.path.append('/home/pi/Giess-o-mat/')
 
-from giessomat import Relais
-from giessomat import Fans
 import eventlet
 import socketio
-
+from giessomat import Fans
+from giessomat import Relais
 
 eventlet.monkey_patch()
 
-relais_light = Relais.Relais(23)
-relais_fan = Relais.Relais(24)
-relais_irrigation = Relais.Relais(25)
-relais_valve = Relais.Relais(16)
+
+path_json = '/home/pi/Giess-o-mat/giessomat/processes.json'
+path_l298n = '/home/pi/Giess-o-mat/giessomat/L298n.py'
+
+
+fans = Fans.Fans(path_l298n, path_json)
+
+relais_light = Relais.Relais(16)
+relais_irrigation = Relais.Relais(23)
 
 mgr = socketio.KombuManager('amqp://')
 sio = socketio.Server(cors_allowed_origins=[
-                      'http://localhost:5672', 'http://192.168.0.134:8080', 'http://192.168.0.235', 'http://192.168.1.149:8080'], client_manager=mgr)
+                      'http://localhost:5672', 'http://192.168.0.134:8080', 'http://192.168.0.235:8080', 'http://192.168.1.149:8080'], client_manager=mgr)
 
 app = socketio.WSGIApp(sio)
 
@@ -48,16 +52,16 @@ def fan(sid, data):
     if data == True:
         print(data)
         sio.emit('fan', True)
-        relais_fan.on()
+        fans.start_fans(5)
     if data == False:
         print(data)
         sio.emit('fan', False)
-        relais_fan.off()
-    if data == 'status':
+        fans.stop_fans()
+    # if data == 'status':
         print('Status request')
-        status= relais_fan.get_status()
-        print(status)
-        sio.emit('fan', status)
+        #status = relais_fan.get_status()
+        # print(status)
+        #sio.emit('fan', status)
 
 
 @sio.event
