@@ -5,13 +5,14 @@ import eventlet
 import socketio
 from giessomat import Fans
 from giessomat import Relais
+from giessomat import Database
 
 eventlet.monkey_patch()
 
+db = Database.Database('/home/pi/Giess-o-mat/giessomat_db.db')
 
 path_json = '/home/pi/Giess-o-mat/giessomat/processes.json'
 path_l298n = '/home/pi/Giess-o-mat/giessomat/L298n.py'
-
 
 fans = Fans.Fans(path_l298n, path_json)
 
@@ -57,11 +58,11 @@ def fan(sid, data):
         print(data)
         sio.emit('fan', False)
         fans.stop_fans()
-    # if data == 'status':
+    if data == 'status':
         print('Status request')
-        #status = relais_fan.get_status()
-        # print(status)
-        #sio.emit('fan', status)
+        status = fans.get_status()
+        print(status)
+        sio.emit('fan', status)
 
 
 @sio.event
@@ -80,6 +81,11 @@ def irrigation(sid, data):
         print(status)
         sio.emit('irrigation', status)
 
+@sio.event
+def sensordata(sid, data):
+    if data == True:
+        print(data)
+        db.sensordata2database()
 
 @sio.event
 def disconnect(sid):
