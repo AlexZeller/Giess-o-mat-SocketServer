@@ -9,15 +9,15 @@ from giessomat import Database
 
 eventlet.monkey_patch()
 
+relais_light = Relais.Relais(23)
+relais_irrigation = Relais.Relais(24)
+
 db = Database.Database('/home/pi/Giess-o-mat/giessomat_db.db')
 
 path_json = '/home/pi/Giess-o-mat/giessomat/processes.json'
 path_l298n = '/home/pi/Giess-o-mat/giessomat/L298n.py'
 
 fans = Fans.Fans(path_l298n, path_json)
-
-relais_light = Relais.Relais(16)
-relais_irrigation = Relais.Relais(23)
 
 mgr = socketio.KombuManager('amqp://')
 sio = socketio.Server(cors_allowed_origins=[
