@@ -86,6 +86,7 @@ def sensordata(sid, data):
     if data == True:
         print(data)
         db.sensordata2database()
+        sio.emit('sensordata', True)
 
 @sio.event
 def disconnect(sid):
